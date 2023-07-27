@@ -1,32 +1,63 @@
 'use client'
 
+import { useContext, useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+
 import * as Dialog from '@radix-ui/react-dialog'
-import { Edit, X } from 'lucide-react'
-import { FormEvent } from 'react'
+import { X } from 'lucide-react'
+
 import { Button } from './ui/Button'
 import { Select } from './ui/Select'
+import { TicketsContext, TICKET_STATUS } from '../contexts/Tickets'
 
-interface TicketDialogProps {
-  data: {
-    id: number
-    customer: string
-    category: string
-    status: string
-    createdAt: string
+const ticketValidationScheme = z.object({
+  customer: z.string(),
+  category: z.string(),
+  about: z.string().max(200, 'Descrição muito longa'),
+  status: z.enum([
+    TICKET_STATUS.OPENED,
+    TICKET_STATUS.ADMITTED,
+    TICKET_STATUS.FINISHED,
+  ]),
+})
+
+type TicketFormData = z.infer<typeof ticketValidationScheme>
+
+export function TicketDialog() {
+  const { currentTicket, changeCurrentTicket } = useContext(TicketsContext)
+
+  const isOpened = currentTicket !== null
+
+  const { register, handleSubmit, reset } = useForm<TicketFormData>({
+    resolver: zodResolver(ticketValidationScheme),
+    defaultValues: {
+      status: currentTicket?.status || 'OPENED',
+    },
+  })
+
+  useEffect(() => {
+    if (currentTicket) {
+      reset({
+        customer: currentTicket.customer,
+        category: currentTicket.category,
+        about: currentTicket.about,
+        status: currentTicket.status,
+      })
+    }
+  }, [reset, currentTicket])
+
+  function handleSave(data: TicketFormData) {
+    console.log(data)
   }
-}
 
-export function TicketDialog({ data }: TicketDialogProps) {
-  function handleSubmit(event: FormEvent) {
-    event.preventDefault()
+  function handleOpenChange() {
+    changeCurrentTicket(null)
   }
 
   return (
-    <Dialog.Root>
-      <Dialog.Trigger className="bg-blue-400 hover:bg-blue-500 transition-colors p-2 rounded-lg">
-        <Edit className="text-white w-5 h-5" />
-      </Dialog.Trigger>
-
+    <Dialog.Root open={isOpened} onOpenChange={handleOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay className="bg-black/60 data-[state=open]:animate-overlayShow fixed inset-0" />
 
@@ -35,9 +66,15 @@ export function TicketDialog({ data }: TicketDialogProps) {
             Detalhes do chamado
           </Dialog.Title>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <form
+            onSubmit={handleSubmit(handleSave)}
+            className="flex flex-col gap-4"
+          >
             <Select
+              {...register('customer')}
               label="Cliente"
+              required
+              placeholder="Selecione o cliente"
               options={[
                 { label: 'José', value: '1' },
                 { label: 'Roberto', value: '2' },
@@ -45,7 +82,10 @@ export function TicketDialog({ data }: TicketDialogProps) {
             />
 
             <Select
+              {...register('category')}
               label="Categoria"
+              required
+              placeholder="Selecione a categoria"
               options={[
                 { label: 'Visita', value: '1' },
                 { label: 'Visita', value: '2' },
@@ -53,8 +93,8 @@ export function TicketDialog({ data }: TicketDialogProps) {
             />
 
             <textarea
-              name="about"
-              id="about"
+              {...register('about')}
+              required
               cols={30}
               rows={10}
               placeholder="Descreva os detalhes do caso..."
@@ -66,23 +106,26 @@ export function TicketDialog({ data }: TicketDialogProps) {
                 type="button"
                 className="text-sm font-medium hover:bg-gray-200 bg-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                Em aberto
+                Aberto
               </button>
               <button
                 type="button"
                 className="text-sm font-medium hover:bg-gray-200 transition-color focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                Progresso
+                Adimitido
               </button>
               <button
                 type="button"
                 className="text-sm font-medium hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                Atentido
+                Finalizado
               </button>
             </div>
 
-            <Button className="rounded shadow-none focus:outline-none focus:ring-2 focus:ring-green-600">
+            <Button
+              type="submit"
+              className="rounded shadow-none focus:outline-none focus:ring-2 focus:ring-green-600"
+            >
               Salvar
             </Button>
           </form>

@@ -1,6 +1,7 @@
 import { MessageSquare } from 'lucide-react'
+import { NewTicketButton } from '../components/NewTicketButton'
+import { TicketDialog } from '../components/TicketDialog'
 import { TicketsTable } from '../components/TicketsTable'
-import { Button } from '../components/ui/Button'
 
 export default function DashboardPage() {
   return (
@@ -14,10 +15,11 @@ export default function DashboardPage() {
 
       <section className="mt-4 space-y-4">
         <div className="flex justify-end">
-          <Button>Abrir chamado</Button>
+          <NewTicketButton />
         </div>
 
         <TicketsTable />
+        <TicketDialog />
       </section>
     </div>
   )

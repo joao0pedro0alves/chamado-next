@@ -2,17 +2,30 @@
   "tickets": [
     {
       "id": 1,
-      "customer": "Paulo José",
+      "customer_id": 1,
       "category": "Suporte",
-      "status": "Atentido",
+      "status": "OPENED",
+      "about": "...",
       "createdAt": "2023-06-01T12:13:45.746Z"
     },
     {
-      "id": 1,
-      "customer": "Ecosis",
+      "id": 2,
+      "customer_id": 2,
       "category": "Suporte",
-      "status": "Aberto",
+      "status": "OPENED",
+      "about": "...",
       "createdAt": "2023-06-01T12:13:45.746Z"
+    }
+  ],
+
+  "customers": [
+    {
+      "id": 1,
+      "name": "CLIENTE 1"
+    },
+    {
+      "id": 2,
+      "name": "CLIENTE 2"
     }
   ]
 }
