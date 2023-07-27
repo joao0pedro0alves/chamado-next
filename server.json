@@ -1,0 +1,18 @@
+{
+  "tickets": [
+    {
+      "id": 1,
+      "customer": "Paulo José",
+      "category": "Suporte",
+      "status": "Atentido",
+      "createdAt": "2023-06-01T12:13:45.746Z"
+    },
+    {
+      "id": 1,
+      "customer": "Ecosis",
+      "category": "Suporte",
+      "status": "Aberto",
+      "createdAt": "2023-06-01T12:13:45.746Z"
+    }
+  ]
+}
